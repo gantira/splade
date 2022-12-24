@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,7 +13,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use ProtoneMedia\Splade\Facades\Splade;
 
-class OrderStatusWasChanged implements ShouldBroadcast
+class OrderStatusWasChanged implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,25 +22,28 @@ class OrderStatusWasChanged implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public Order $order)
     {
-        //
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\PrivateChannel
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('shop');
+        return new PrivateChannel('orders.' . $this->order->id);
     }
 
     public function broadcastWith()
     {
         return [
-            Splade::refreshOnEvent()
+            Splade::refreshOnEvent(),
+            Splade::toastOnEvent('The status was changed!')
+                ->rightBottom()
+                ->info()
+                ->autoDismiss(5)
         ];
     }
 }

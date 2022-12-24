@@ -29,11 +29,11 @@ class ChangeOrderStatus extends Command
      */
     public function handle()
     {
-        Order::first()->update([
+        $order = tap(Order::first())->update([
             'status' => $this->argument('status')
         ]);
 
-        event(new OrderStatusWasChanged);
+        event(new OrderStatusWasChanged($order));
 
         $this->info("Change order status to {$this->argument('status')} success!");
 

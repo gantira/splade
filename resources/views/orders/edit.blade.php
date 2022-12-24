@@ -10,9 +10,10 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
 
+                    ID: {{ $order->id }}
                     Status: {{ $order->status }}
 
-                    <x-splade-event private channel="shop" listen="OrderStatusWasChanged" />
+                    <x-splade-event private :channel="'orders.'.$order->id" listen="OrderStatusWasChanged" />
 
                 </div>
             </div>
