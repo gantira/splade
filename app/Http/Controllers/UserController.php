@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use ProtoneMedia\Splade\Facades\Toast;
+use ProtoneMedia\Splade\SpladeTable;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
@@ -13,9 +17,39 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $globalSearch = AllowedFilter::callback('global', function ($query, $value) {
+            $query->where(function ($query) use ($value) {
+                Collection::wrap($value)->each(function ($value) use ($query) {
+                    $query
+                        ->orWhere('name', 'LIKE', "%{$value}%")
+                        ->orWhere('email', 'LIKE', "%{$value}%");
+                });
+            });
+        });
+
+        $users = QueryBuilder::for(User::class)
+            ->defaultSort('name')
+            ->allowedSorts(['name', 'email'])
+            ->allowedFilters(['name', 'email', 'language_code', $globalSearch])
+            ->paginate($request->perPage)
+            ->withQueryString();
+
+        return view('users.index', [
+            'users' => SpladeTable::for($users)
+                ->defaultSort('name')
+                ->withGlobalSearch()
+                ->column('name', sortable: true, searchable: true, canBeHidden: false)
+                ->column('email', sortable: true, searchable: true)
+                ->column('language_code')
+                ->column('action')
+                ->selectFilter('language_code', [
+                    'en' => 'English',
+                    'id' => 'Indonesia',
+                    'es' => 'Espanyol'
+                ])
+        ]);
     }
 
     /**
@@ -82,7 +116,7 @@ class UserController extends Controller
             ->message('Nice')
             ->autoDismiss(5);
 
-        return redirect()->route('user.update', $user);
+        return redirect()->route('users');
     }
 
     /**
