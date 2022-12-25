@@ -39,6 +39,9 @@ Route::middleware('splade')->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::get('/order', [OrderController::class, 'show'])->name('order');
+
+        Route::view('page1', 'page1');
+        Route::view('page2', 'page2');
     });
 
     require __DIR__.'/auth.php';
