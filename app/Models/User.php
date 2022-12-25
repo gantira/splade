@@ -43,6 +43,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public static function countryOptions()
+    {
+        return [
+            'be' => 'Belgium',
+            'nl' => 'The Netherlands',
+            'jpn' => 'Japan',
+            'idn' => 'Indonesia',
+        ];
+    }
+
+    public static function rolesOptions()
+    {
+        return [
+            'writer' => 'Writer',
+            'editor' => 'Editor',
+            'manager' => 'Manager',
+            'guest' => 'Guest',
+        ];
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);

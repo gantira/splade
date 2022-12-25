@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use ProtoneMedia\Splade\Facades\Splade;
 use ProtoneMedia\Splade\Facades\Toast;
 use ProtoneMedia\Splade\SpladeTable;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -81,7 +82,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return view('users.show', [
+            'user' => $user
+        ]);
     }
 
     /**
@@ -93,7 +96,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return view('users.edit', [
-            'user' => $user
+            'user' => $user,
+
+            'countries' => User::countryOptions(),
+            'roles' => User::rolesOptions(),
         ]);
     }
 
@@ -107,16 +113,16 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'name' => 'required|max:100|string'
+            'name' => 'required|max:100|string',
+            'email' => 'required|email|max:100|string',
+            'roles' => 'required|array|min:2'
         ]);
 
         $user->update($data);
 
-        Toast::title('The user was updated!')
-            ->message('Nice')
-            ->autoDismiss(5);
+        Splade::toast('User Updated!')->autoDismiss(5);
 
-        return redirect()->route('users');
+        return redirect()->route('users.index');
     }
 
     /**
