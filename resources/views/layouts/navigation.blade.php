@@ -31,6 +31,13 @@
                             {{ __('Users') }}
                         </x-nav-link>
                     </div>
+               
+                    <!-- Navigation Links -->
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link :href="route('coupon.index')" :active="request()->routeIs('coupon.index')">
+                            {{ __('Coupon') }}
+                        </x-nav-link>
+                    </div>
                 </div>
 
                 <!-- Settings Dropdown -->

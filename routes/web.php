@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -39,9 +40,11 @@ Route::middleware('splade')->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::get('/order', [OrderController::class, 'show'])->name('order');
-
+        
         Route::view('page1', 'page1');
         Route::view('page2', 'page2');
+
+        Route::get('/coupon', CouponController::class)->name('coupon.index');
     });
 
     require __DIR__.'/auth.php';
